@@ -22,7 +22,10 @@ namespace unlockfps_nc
             _config = _configService.Config;
             _processService = processService;
             SetupBindings();
-        }
+
+            // QOL: Select the start game button for keyboard
+			BtnStartGame.Select();
+		}
 
         private void SettingsMenuItem_Click(object sender, EventArgs e)
         {
