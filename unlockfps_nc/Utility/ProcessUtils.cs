@@ -11,15 +11,8 @@ namespace unlockfps_nc.Utility
 {
     internal class ProcessUtils
     {
-        public static string GetProcessPathFromPid(uint pid, out IntPtr processHandle)
+        public static string GetProcessPath(IntPtr hProcess)
         {
-            var hProcess = Native.OpenProcess(
-                ProcessAccess.QUERY_LIMITED_INFORMATION |
-                ProcessAccess.TERMINATE |
-                StandardAccess.SYNCHRONIZE, false, pid);
-
-            processHandle = hProcess;
-
             if (hProcess == IntPtr.Zero)
                 return string.Empty;
 
@@ -216,6 +209,22 @@ namespace unlockfps_nc.Utility
             }
 
             return IntPtr.Zero;
+        }
+
+        public static bool IsWindowDrawing(IntPtr hWnd)
+        {
+            if (!Native.IsWindowVisible(hWnd))
+                return false;
+
+            Native.RedrawWindow(hWnd, IntPtr.Zero, IntPtr.Zero, 0x122); // RDW_INTERNALPAINT | RDW_NOERASE | RDW_UPDATENOW
+            Native.UpdateWindow(hWnd);
+
+            var hdc = Native.GetDC(hWnd);
+            if (hdc == IntPtr.Zero)
+                return false;
+
+            Native.ReleaseDC(hWnd, hdc);
+            return true;
         }
 
     }
